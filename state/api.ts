@@ -56,7 +56,7 @@ export const api = createApi({
           ? [
               {
                 type: result.userRole === "manager" ? "Managers" : "Tenants",
-                id: result.userInfo.userId,
+                id: result.userInfo.id,
               },
             ]
           : [],
