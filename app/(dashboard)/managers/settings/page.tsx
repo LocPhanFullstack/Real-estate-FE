@@ -21,7 +21,7 @@ const ManagerSettings = () => {
       ...data,
     });
   };
-  return <SettingsForm initialData={initialData} onSubmit={handleSubmit} userType="tenant" />;
+  return <SettingsForm initialData={initialData} onSubmit={handleSubmit} userType="manager" />;
 };
 
 export default ManagerSettings;

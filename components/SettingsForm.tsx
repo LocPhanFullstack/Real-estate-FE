@@ -83,7 +83,7 @@ const SettingsForm = ({ initialData, onSubmit, userType }: SettingsFormProps) =>
             <Button
               type="button"
               onClick={toggleEditMode}
-              className="bg-secondary-500 text-white hover:bg-secondary-600 cursor-pointer"
+              className="bg-secondary-600 text-white hover:bg-secondary-500 cursor-pointer"
             >
               {editMode ? "Cancel" : "Edit"}
             </Button>
