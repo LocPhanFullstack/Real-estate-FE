@@ -2,6 +2,7 @@ import { LucideIcon } from "lucide-react";
 import { Application, Manager, Property, Tenant } from "./prismaTypes";
 import { AuthUser } from "aws-amplify/auth";
 import { MotionProps as OriginalMotionProps } from "framer-motion";
+import { SettingsFormData } from "@/lib/schemas";
 
 declare module "framer-motion" {
   interface MotionProps extends OriginalMotionProps {
@@ -125,7 +126,7 @@ declare global {
   }
 
   interface SettingsFormProps {
-    initialData: SettingsFormProps;
+    initialData: SettingsFormData;
     onSubmit: (data: SettingsFormData) => Promise<void>;
     userType: "manager" | "tenant";
   }
