@@ -11,49 +11,6 @@ declare module "framer-motion" {
 }
 
 declare global {
-  enum AmenityEnum {
-    WasherDryer = "WasherDryer",
-    AirConditioning = "AirConditioning",
-    Dishwasher = "Dishwasher",
-    HighSpeedInternet = "HighSpeedInternet",
-    HardwoodFloors = "HardwoodFloors",
-    WalkInClosets = "WalkInClosets",
-    Microwave = "Microwave",
-    Refrigerator = "Refrigerator",
-    Pool = "Pool",
-    Gym = "Gym",
-    Parking = "Parking",
-    PetsAllowed = "PetsAllowed",
-    WiFi = "WiFi",
-  }
-
-  enum HighlightEnum {
-    HighSpeedInternetAccess = "HighSpeedInternetAccess",
-    WasherDryer = "WasherDryer",
-    AirConditioning = "AirConditioning",
-    Heating = "Heating",
-    SmokeFree = "SmokeFree",
-    CableReady = "CableReady",
-    SatelliteTV = "SatelliteTV",
-    DoubleVanities = "DoubleVanities",
-    TubShower = "TubShower",
-    Intercom = "Intercom",
-    SprinklerSystem = "SprinklerSystem",
-    RecentlyRenovated = "RecentlyRenovated",
-    CloseToTransit = "CloseToTransit",
-    GreatView = "GreatView",
-    QuietNeighborhood = "QuietNeighborhood",
-  }
-
-  enum PropertyTypeEnum {
-    Rooms = "Rooms",
-    Tinyhouse = "Tinyhouse",
-    Apartment = "Apartment",
-    Villa = "Villa",
-    Townhouse = "Townhouse",
-    Cottage = "Cottage",
-  }
-
   interface SidebarLinkProps {
     href: string;
     icon: LucideIcon;
@@ -135,6 +92,24 @@ declare global {
     cognitoInfo: AuthUser;
     userInfo: Tenant | Manager;
     userRole: JsonObject | JsonPrimitive | JsonArray;
+  }
+
+  interface FiltersState {
+    location: string;
+    beds: string;
+    baths: string;
+    propertyType: string;
+    amenities: string[];
+    availableFrom: string;
+    priceRange: [number, number] | [null, null];
+    squareFeet: [number, number] | [null, null];
+    coordinates: [number, number];
+  }
+
+  interface InitialStateType {
+    filters: FiltersState;
+    isFiltersFullOpen: boolean;
+    viewMode: "grid" | "list";
   }
 }
 
