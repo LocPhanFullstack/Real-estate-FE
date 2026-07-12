@@ -9,6 +9,7 @@ import FilterFull from "./components/FilterFull";
 import { cleanParams } from "@/lib/utils";
 import { setFilters } from "@/state";
 import Map from "./components/Map";
+import Listing from "./components/Listing";
 
 const SearchPage = () => {
   const searchParams = useSearchParams();
@@ -47,7 +48,9 @@ const SearchPage = () => {
           <FilterFull />
         </div>
         <Map />
-        <div className="basis-4/12 overflow-y-auto">{/* <Listing /> */}</div>
+        <div className="basis-4/12 overflow-y-auto">
+          <Listing />
+        </div>
       </div>
     </div>
   );

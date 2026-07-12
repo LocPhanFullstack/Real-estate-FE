@@ -57,7 +57,7 @@ declare global {
     property: Property;
     isFavorite: boolean;
     onFavoriteToggle: () => void;
-    showFavotiteButton?: boolean;
+    showFavoriteButton?: boolean;
     propertyLink?: string;
   }
 
@@ -65,7 +65,7 @@ declare global {
     property: Property;
     isFavorite: boolean;
     onFavoriteToggle: () => void;
-    showFavotiteButton?: boolean;
+    showFavoriteButton?: boolean;
     propertyLink?: string;
   }
 

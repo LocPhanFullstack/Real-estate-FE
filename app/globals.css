@@ -314,3 +314,13 @@ body {
 [data-close-button="true"] {
   @apply bg-background border-border text-foreground hover:bg-muted;
 }
+
+/* Loading bar animation */
+@keyframes loading-bar {
+  0% {
+    left: -33%;
+  }
+  100% {
+    left: 100%;
+  }
+}
