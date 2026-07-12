@@ -28,6 +28,7 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { useGetPropertiesQuery } from "@/state/api";
 import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
 
 const FilterFull = () => {
   const dispatch = useDispatch();
@@ -65,6 +66,37 @@ const FilterFull = () => {
     updateURL(initialState.filters);
   };
 
+  const handleLocationSearch = async () => {
+    if (!localFilters.location.trim()) return;
+
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          localFilters.location,
+        )}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}&fuzzyMatch=true`,
+      );
+
+      if (!response.ok) {
+        throw new Error(`Mapbox API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].center;
+        setLocalFilters((prev) => ({
+          ...prev,
+          coordinates: [lng, lat],
+        }));
+      } else {
+        toast.error("Location not found. Please try a different search.");
+      }
+    } catch (err) {
+      console.error("Error search location:", err);
+      toast.error("Failed to search location. Please try again.");
+    }
+  };
+
   useEffect(() => {
     setLocalFilters(filters);
   }, [filters]);
@@ -74,22 +106,6 @@ const FilterFull = () => {
   return (
     <div className="bg-white rounded-lg p-4 h-full overflow-auto">
       <div className="flex flex-col space-y-6">
-        {/* Location */}
-        <div>
-          <h4 className="font-bold mb-2">Location</h4>
-          <div className="flex items-center rounded-xl border border-primary-400 overflow-hidden focus-within:ring-4 focus-within:ring-blue-500/20 transition-all">
-            <Input
-              placeholder="Enter location"
-              value={filters.location}
-              onChange={(e) => setLocalFilters((prev) => ({ ...prev, location: e.target.value }))}
-              className="rounded-none border-0 shadow-none focus-visible:ring-0"
-            />
-            <Button className="rounded-none border-0 border-l border-l-primary-400 shadow-none hover:bg-primary-200  bg-primary-100 px-4 cursor-pointer">
-              <Search className="w-4 h-4 text-primary-800" />
-            </Button>
-          </div>
-        </div>
-
         {/* Property Type */}
         <div>
           <h4 className="font-bold mb-2">Property Type</h4>

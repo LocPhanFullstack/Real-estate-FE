@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export const initialState: InitialStateType = {
   isFiltersFullOpen: false,
   filters: {
-    location: "Vietnam",
+    location: "Los Angeles",
     beds: "any",
     baths: "any",
     propertyType: "any",

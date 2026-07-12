@@ -17,6 +17,8 @@ import {
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { SidebarTrigger } from "./ui/sidebar";
+import { cleanParams } from "@/lib/utils";
+import { initialState } from "@/state";
 
 const Navbar = () => {
   const { data: authUser } = useGetAuthUserQuery();
@@ -29,6 +31,18 @@ const Navbar = () => {
     await signOut();
     window.location.href = "/";
   };
+
+  const handleSearchClick = () => {
+    const cleanFilters = cleanParams(initialState.filters);
+    const searchParams = new URLSearchParams();
+
+    Object.entries(cleanFilters).forEach(([key, value]) => {
+      searchParams.set(key, Array.isArray(value) ? value.join(",") : value.toString());
+    });
+
+    router.push(`/search?${searchParams.toString()}`);
+  };
+
   return (
     <div
       className="fixed top-0 left-0 z-50 w-full shadow-xl"
@@ -54,13 +68,13 @@ const Navbar = () => {
             <Button
               variant="secondary"
               className="md:ml-4 bg-primary-50 text-primary-700 hover:bg-secondary-500 hover:text-primary-50"
-              onClick={() =>
-                router.push(
-                  authUser.userRole?.toLowerCase() === "manager"
-                    ? "/managers/newproperty"
-                    : "/search",
-                )
-              }
+              onClick={() => {
+                if (authUser.userRole?.toLowerCase() === "manager") {
+                  router.push("/managers/newproperty");
+                } else {
+                  handleSearchClick();
+                }
+              }}
             >
               {authUser.userRole?.toLowerCase() === "manager" ? (
                 <>

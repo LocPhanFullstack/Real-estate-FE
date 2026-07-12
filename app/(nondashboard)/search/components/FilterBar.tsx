@@ -1,7 +1,7 @@
 import { setFilters, setViewMode, toggleFiltersFullOpen } from "@/state";
 import { useAppSelector } from "@/state/redux";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { debounce } from "lodash";
 import { cleanParams, cn, formatPriceValue } from "@/lib/utils";
@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { bathsOptions, bedsOptions, getOptionLabel, propertyTypeOptions } from "@/lib/constants";
+import { toast } from "sonner";
 
 const FilterBar = () => {
   const dispatch = useDispatch();
@@ -60,6 +61,44 @@ const FilterBar = () => {
     updateURL(newFilters);
   };
 
+  const handleLocationSearch = async () => {
+    if (!searchInput.trim()) return;
+
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          searchInput,
+        )}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}&fuzzyMatch=true`,
+      );
+
+      if (!response.ok) {
+        throw new Error(`Mapbox API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].center;
+        const updatedFilters = {
+          ...filters,
+          location: searchInput,
+          coordinates: [lng, lat] as [number, number],
+        };
+        dispatch(setFilters({ location: searchInput, coordinates: [lng, lat] }));
+        updateURL(updatedFilters);
+      } else {
+        toast.error("Location not found. Please try a different search.");
+      }
+    } catch (err) {
+      console.error("Error search location:", err);
+      toast.error("Failed to search location. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    setSearchInput(filters.location);
+  }, [filters.location]);
+
   return (
     <div className="flex justify-between items-center w-full py-5">
       {/* Filters */}
@@ -85,7 +124,10 @@ const FilterBar = () => {
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-40 rounded-none border-0 shadow-none focus-visible:ring-0 py-3"
           />
-          <Button className="rounded-none border-0 border-l border-l-primary-400 shadow-none hover:bg-primary-200  bg-primary-100 px-4 cursor-pointer">
+          <Button
+            className="rounded-none border-0 border-l border-l-primary-400 shadow-none hover:bg-primary-200  bg-primary-100 px-4 cursor-pointer"
+            onClick={handleLocationSearch}
+          >
             <Search className="w-4 h-4 text-primary-800" />
           </Button>
         </div>
