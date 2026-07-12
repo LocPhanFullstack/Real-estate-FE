@@ -22,18 +22,22 @@ import { useAppSelector } from "@/state/redux";
 import { debounce } from "lodash";
 import { CalendarIcon, Search } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
+import { useGetPropertiesQuery } from "@/state/api";
+import { Spinner } from "@/components/ui/spinner";
 
 const FilterFull = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
   const filters = useAppSelector((state) => state.global.filters);
-  const [localFilters, setLocalFilters] = useState(initialState.filters);
+  const [localFilters, setLocalFilters] = useState(filters);
   const isFiltersFullOpen = useAppSelector((state) => state.global.isFiltersFullOpen);
+
+  const { isFetching } = useGetPropertiesQuery(filters);
 
   const updateURL = useMemo(
     () =>
@@ -60,6 +64,10 @@ const FilterFull = () => {
     dispatch(setFilters(initialState.filters));
     updateURL(initialState.filters);
   };
+
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
 
   if (!isFiltersFullOpen) return null;
 
@@ -267,7 +275,9 @@ const FilterFull = () => {
           <Button
             onClick={handleSubmit}
             className="flex-1 bg-primary-700 text-white rounded-xl cursor-pointer"
+            disabled={isFetching}
           >
+            {isFetching ? <Spinner className="size-4 mr-2" /> : null}
             APPLY
           </Button>
           <Button

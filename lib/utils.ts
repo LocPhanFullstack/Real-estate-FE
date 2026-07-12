@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -51,4 +52,22 @@ export const formatPriceValue = (value: number | null, isMin: boolean) => {
     return isMin ? `$${kValue}k+` : `<$${kValue}k`;
   }
   return isMin ? `$${value}` : `<$${value}`;
+};
+
+type MutationMessages = {
+  success?: string;
+  error: string;
+};
+
+export const withToast = async <T>(mutationFn: Promise<T>, messages: Partial<MutationMessages>) => {
+  const { success, error } = messages;
+
+  try {
+    const result = await mutationFn;
+    if (success) toast.success(success);
+    return result;
+  } catch (err) {
+    if (error) toast.error(error);
+    throw err;
+  }
 };

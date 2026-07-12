@@ -8,6 +8,7 @@ import FilterBar from "./components/FilterBar";
 import FilterFull from "./components/FilterFull";
 import { cleanParams } from "@/lib/utils";
 import { setFilters } from "@/state";
+import Map from "./components/Map";
 
 const SearchPage = () => {
   const searchParams = useSearchParams();
@@ -20,6 +21,8 @@ const SearchPage = () => {
         acc[key] = value.split(",").map((v) => (v === "" ? null : Number(v)));
       } else if (key === "coordinates") {
         acc[key] = value.split(",").map(Number);
+      } else if (key === "amenities" || key === "favoriteIds") {
+        acc[key] = value ? value.split(",") : [];
       } else {
         acc[key] = value === "any" ? null : value;
       }
@@ -34,7 +37,7 @@ const SearchPage = () => {
   return (
     <div
       className="w-full mx-auto px-5 flex flex-col"
-      style={{ height: `calc(100vh-${NAVBAR_HEIGHT}px)` }}
+      style={{ height: `calc(100vh - ${NAVBAR_HEIGHT}px)` }}
     >
       <FilterBar />
       <div className="flex justify-between flex-1 overflow-hidden gap-3 mb-5">
@@ -43,7 +46,7 @@ const SearchPage = () => {
         >
           <FilterFull />
         </div>
-        {/* <Map /> */}
+        <Map />
         <div className="basis-4/12 overflow-y-auto">{/* <Listing /> */}</div>
       </div>
     </div>
