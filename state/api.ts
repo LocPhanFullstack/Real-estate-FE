@@ -135,6 +135,12 @@ export const api = createApi({
         { type: "Tenants", id: result?.id },
         { type: "Properties", id: "LIST" },
       ],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          success: "Added to favorites!",
+          error: "Failed to add favorite.",
+        });
+      },
     }),
 
     removeFavoriteProperty: build.mutation<Tenant, { cognitoId: string; propertyId: number }>({
@@ -146,6 +152,12 @@ export const api = createApi({
         { type: "Tenants", id: result?.id },
         { type: "Properties", id: "LIST" },
       ],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          success: "Removed from favorites.",
+          error: "Failed to remove favorite.",
+        });
+      },
     }),
   }),
 });
