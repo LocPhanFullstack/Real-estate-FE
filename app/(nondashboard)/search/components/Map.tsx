@@ -69,6 +69,16 @@ const Map = () => {
     );
   }, [properties]); // Only update marker when properties changed, not effect to map instance
 
+  useEffect(() => {
+    if (!mapRef.current || !filters.coordinates) return;
+
+    mapRef.current.flyTo({
+      center: filters.coordinates,
+      zoom: 9,
+      essential: true,
+    });
+  }, [filters.coordinates]); // jump to new coordinates
+
   return (
     <div className="basis-5/12 grow relative rounded-xl">
       <div

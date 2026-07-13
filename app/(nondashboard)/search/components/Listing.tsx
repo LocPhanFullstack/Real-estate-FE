@@ -55,7 +55,7 @@ const Listing = () => {
         </div>
       )}
       <div className="flex">
-        <div className="p-4 w-full">
+        <div className="p-4 w-full flex flex-col gap-5">
           {isLoading &&
             Array.from({ length: 4 }).map((_, i) =>
               viewMode === "grid" ? <CardSkeleton key={i} /> : <CardCompactSkeleton key={i} />,
