@@ -71,7 +71,7 @@ declare global {
 
   interface HeaderProps {
     title: string;
-    subTitle: string;
+    subtitle: string;
   }
 
   interface NavbarProps {

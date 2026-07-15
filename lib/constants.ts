@@ -1,16 +1,28 @@
-import { AmenityEnum, PropertyTypeEnum } from "@/types/enum";
+import { AmenityEnum, HighlightEnum, PropertyTypeEnum } from "@/types/enum";
 import {
+  Bath,
   Building,
+  Bus,
+  Cable,
   Car,
   Castle,
+  Cigarette,
+  Droplets,
   Dumbbell,
+  Flame,
+  Hammer,
   Home,
   LucideIcon,
   Maximize,
+  Mountain,
   PawPrint,
+  PhoneCall,
+  Satellite,
+  ShieldCheck,
   Thermometer,
   Trees,
   Tv,
+  Volume1,
   Warehouse,
   Waves,
   Wifi,
@@ -19,7 +31,7 @@ import {
 export const NAVBAR_HEIGHT = 52;
 
 export interface FilterIconOption {
-  value: PropertyTypeEnum | AmenityEnum;
+  value: PropertyTypeEnum | AmenityEnum | HighlightEnum;
   label: string;
   icon: LucideIcon;
 }
@@ -52,6 +64,24 @@ export const amenityOptions: FilterIconOption[] = [
   { value: AmenityEnum.Parking, label: "Parking", icon: Car },
   { value: AmenityEnum.PetsAllowed, label: "Pets Allowed", icon: PawPrint },
   { value: AmenityEnum.WiFi, label: "WiFi", icon: Wifi },
+];
+
+export const highlightOptions: FilterIconOption[] = [
+  { value: HighlightEnum.HighSpeedInternetAccess, label: "High-Speed Internet Access", icon: Wifi },
+  { value: HighlightEnum.WasherDryer, label: "Washer/Dryer", icon: Waves },
+  { value: HighlightEnum.AirConditioning, label: "Air Conditioning", icon: Thermometer },
+  { value: HighlightEnum.Heating, label: "Heating", icon: Flame },
+  { value: HighlightEnum.SmokeFree, label: "Smoke Free", icon: Cigarette },
+  { value: HighlightEnum.CableReady, label: "Cable Ready", icon: Cable },
+  { value: HighlightEnum.SatelliteTV, label: "Satellite TV", icon: Satellite },
+  { value: HighlightEnum.DoubleVanities, label: "Double Vanities", icon: Bath },
+  { value: HighlightEnum.TubShower, label: "Tub/Shower", icon: Droplets },
+  { value: HighlightEnum.Intercom, label: "Intercom", icon: PhoneCall },
+  { value: HighlightEnum.SprinklerSystem, label: "Sprinkler System", icon: ShieldCheck },
+  { value: HighlightEnum.RecentlyRenovated, label: "Recently Renovated", icon: Hammer },
+  { value: HighlightEnum.CloseToTransit, label: "Close to Transit", icon: Bus },
+  { value: HighlightEnum.GreatView, label: "Great View", icon: Mountain },
+  { value: HighlightEnum.QuietNeighborhood, label: "Quiet Neighborhood", icon: Volume1 },
 ];
 
 export const bedsOptions: FilterOption[] = [
