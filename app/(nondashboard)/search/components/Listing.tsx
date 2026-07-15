@@ -37,6 +37,8 @@ const Listing = () => {
 
   if (isError || (!properties && !isLoading)) return <div>Failed to fetch properties</div>;
 
+  console.log(tenant);
+
   return (
     <div className="w-full">
       <h3 className="text-sm px-4 font-bold">
