@@ -1,5 +1,5 @@
 import { cleanParams, createNewUserInDatabase, withToast } from "@/lib/utils";
-import { Application, Manager, Property, Tenant } from "@/types/prismaTypes";
+import { Application, Lease, Manager, Payment, Property, Tenant } from "@/types/prismaTypes";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 
@@ -16,7 +16,15 @@ export const api = createApi({
     },
   }),
   reducerPath: "api",
-  tagTypes: ["Managers", "Tenants", "Properties", "PropertyDetails", "Applications"],
+  tagTypes: [
+    "Managers",
+    "Tenants",
+    "Properties",
+    "PropertyDetails",
+    "Applications",
+    "Leases",
+    "Payments",
+  ],
   endpoints: (build) => ({
     getAuthUser: build.query<User, void>({
       queryFn: async (_, _queryApi, _extraoptions, fetchWithBQ) => {
@@ -170,6 +178,22 @@ export const api = createApi({
       },
     }),
 
+    getCurrentResidences: build.query<Property[], string>({
+      query: (cognitoId) => `tenants/${cognitoId}/residences`,
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Properties" as const, id })),
+              { type: "Properties", id: "LIST" },
+            ]
+          : [{ type: "Properties", id: "LIST" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch current residences.",
+        });
+      },
+    }),
+
     // application related endpoints
     createApplication: build.mutation<Application, Partial<Application>>({
       query: (body) => ({
@@ -182,6 +206,33 @@ export const api = createApi({
         await withToast(queryFulfilled, {
           success: "Application created successfully",
           error: "Failed to create application",
+        });
+      },
+    }),
+
+    // lease related endpoints
+    getLeases: build.query<Lease[], void>({
+      query: () => "leases",
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Leases" as const, id })),
+              { type: "Leases", id: "LIST" },
+            ]
+          : [{ type: "Leases", id: "LIST" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch leases.",
+        });
+      },
+    }),
+
+    getLeasePayments: build.query<Payment[], number>({
+      query: (leaseId) => `leases/${leaseId}/payments`,
+      providesTags: (result, error, leaseId) => [{ type: "Payments" as const, id: leaseId }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch lease payments.",
         });
       },
     }),
@@ -198,4 +249,7 @@ export const {
   useGetTenantQuery,
   useGetPropertyQuery,
   useCreateApplicationMutation,
+  useGetCurrentResidencesQuery,
+  useGetLeasesQuery,
+  useGetLeasePaymentsQuery,
 } = api;
