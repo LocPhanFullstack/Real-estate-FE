@@ -13,8 +13,8 @@ import { Property } from "@/types/prismaTypes";
 
 const Listing = () => {
   const { data: authUser } = useGetAuthUserQuery();
-  const { data: tenant } = useGetTenantQuery(authUser?.cognitoInfo?.userId || "", {
-    skip: !authUser?.cognitoInfo?.userId,
+  const { data: tenant } = useGetTenantQuery(undefined, {
+    skip: !authUser,
   });
   const [addFavorite] = useAddFavoritePropertyMutation();
   const [removeFavorite] = useRemoveFavoritePropertyMutation();
@@ -29,15 +29,13 @@ const Listing = () => {
     const isFavorite = tenant?.favorites?.some((fav: Property) => fav.id === propertyId) || false;
 
     if (isFavorite) {
-      await removeFavorite({ cognitoId: tenant.cognitoId, propertyId });
+      await removeFavorite({ propertyId });
     } else {
-      await addFavorite({ cognitoId: tenant.cognitoId, propertyId });
+      await addFavorite({ propertyId });
     }
   };
 
   if (isError || (!properties && !isLoading)) return <div>Failed to fetch properties</div>;
-
-  console.log(tenant);
 
   return (
     <div className="w-full">

@@ -7,9 +7,7 @@ import React from "react";
 
 const Favorites = () => {
   const { data: authUser } = useGetAuthUserQuery();
-  const { data: tenant } = useGetTenantQuery(authUser?.cognitoInfo?.userId || "", {
-    skip: !authUser?.cognitoInfo?.userId,
-  });
+  const { data: tenant } = useGetTenantQuery(undefined, { skip: !authUser });
 
   const {
     data: favoriteProperties,

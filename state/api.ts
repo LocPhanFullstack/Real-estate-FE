@@ -70,13 +70,30 @@ export const api = createApi({
           : [],
     }),
 
-    updateManagerSettings: build.mutation<Manager, { cognitoId: string } & Partial<Manager>>({
+    // manager related endpoints
+    updateManagerSettings: build.mutation<Manager, Partial<Manager>>({
       query: ({ cognitoId, ...updatedManager }) => ({
-        url: `managers/${cognitoId}`,
+        url: `managers/me`,
         method: "PUT",
         body: updatedManager,
       }),
       invalidatesTags: (result) => (result ? [{ type: "Managers", id: result.id }] : ["Managers"]),
+    }),
+
+    getManagerProperties: build.query<Property[], void>({
+      query: () => `managers/properties`,
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Properties" as const, id })),
+              { type: "Properties", id: "LIST" },
+            ]
+          : [{ type: "Properties", id: "LIST" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to load manager profile.",
+        });
+      },
     }),
 
     // property related endpoints
@@ -125,8 +142,8 @@ export const api = createApi({
     }),
 
     // tenant related endpoints
-    getTenant: build.query<Tenant, string>({
-      query: (cognitoId) => `tenants/${cognitoId}`,
+    getTenant: build.query<Tenant, void>({
+      query: () => `tenants/me`,
       providesTags: (result) => [{ type: "Tenants", id: result?.id }],
       async onQueryStarted(_, { queryFulfilled }) {
         await withToast(queryFulfilled, {
@@ -135,18 +152,18 @@ export const api = createApi({
       },
     }),
 
-    updateTenantSettings: build.mutation<Tenant, { cognitoId: string } & Partial<Tenant>>({
-      query: ({ cognitoId, ...updatedTenant }) => ({
-        url: `tenants/${cognitoId}`,
+    updateTenantSettings: build.mutation<Tenant, Partial<Tenant>>({
+      query: (updatedTenant) => ({
+        url: `tenants/me`,
         method: "PUT",
         body: updatedTenant,
       }),
       invalidatesTags: (result) => (result ? [{ type: "Tenants", id: result.id }] : ["Tenants"]),
     }),
 
-    addFavoriteProperty: build.mutation<Tenant, { cognitoId: string; propertyId: number }>({
-      query: ({ cognitoId, propertyId }) => ({
-        url: `tenants/${cognitoId}/favorites/${propertyId}`,
+    addFavoriteProperty: build.mutation<Tenant, { propertyId: number }>({
+      query: ({ propertyId }) => ({
+        url: `tenants/favorites/${propertyId}`,
         method: "POST",
       }),
       invalidatesTags: (result) => [
@@ -161,9 +178,9 @@ export const api = createApi({
       },
     }),
 
-    removeFavoriteProperty: build.mutation<Tenant, { cognitoId: string; propertyId: number }>({
-      query: ({ cognitoId, propertyId }) => ({
-        url: `tenants/${cognitoId}/favorites/${propertyId}`,
+    removeFavoriteProperty: build.mutation<Tenant, { propertyId: number }>({
+      query: ({ propertyId }) => ({
+        url: `tenants/favorites/${propertyId}`,
         method: "DELETE",
       }),
       invalidatesTags: (result) => [
@@ -178,8 +195,8 @@ export const api = createApi({
       },
     }),
 
-    getCurrentResidences: build.query<Property[], string>({
-      query: (cognitoId) => `tenants/${cognitoId}/residences`,
+    getCurrentResidences: build.query<Property[], void>({
+      query: () => `tenants/me/residences`,
       providesTags: (result) =>
         result
           ? [
@@ -227,6 +244,16 @@ export const api = createApi({
       },
     }),
 
+    getPropertyLeases: build.query<Lease[], number>({
+      query: (propertyId) => `properties/${propertyId}/leases`,
+      providesTags: (result, error, propertyId) => [{ type: "Leases" as const, id: propertyId }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch property leases.",
+        });
+      },
+    }),
+
     getLeasePayments: build.query<Payment[], number>({
       query: (leaseId) => `leases/${leaseId}/payments`,
       providesTags: (result, error, leaseId) => [{ type: "Payments" as const, id: leaseId }],
@@ -252,4 +279,6 @@ export const {
   useGetCurrentResidencesQuery,
   useGetLeasesQuery,
   useGetLeasePaymentsQuery,
+  useGetManagerPropertiesQuery,
+  useGetPropertyLeasesQuery,
 } = api;
